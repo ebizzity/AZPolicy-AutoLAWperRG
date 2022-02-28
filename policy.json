@@ -1,0 +1,71 @@
+{
+    "mode": "All",
+    "policyRule": {
+      "if": {
+        "field": "type",
+        "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+      },
+      "then": {
+        "effect": "deployIfNotExists",
+        "details": {
+          "type": "Microsoft.OperationalInsights/workspaces",
+          "evaluationDelay": "AfterProvisioning",
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+          ],
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "lawsku": {
+                    "type": "string"
+                  },
+                  "lawretention": {
+                    "type": "int"
+                  }
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.OperationalInsights/workspaces",
+                    "apiVersion": "2021-12-01-preview",
+                    "name": "[concat(parameters('name'),'-LAW-001')]",
+                    "location": "[parameters('location')]",
+                    "properties": {
+                      "sku": {
+                        "name": "[parameters('lawsku')]"
+                      },
+                      "retentionInDays": "[parameters('lawretention')]"
+                    }
+                  }
+                ]
+              },
+              "parameters": {
+                "name": {
+                  "value": "[field('name')]"
+                },
+                "location": {
+                  "value": "[field('location')]"
+                },
+                "lawsku": {
+                  "value": "pergb2018"
+                },
+                "lawretention": {
+                  "value": 30
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": {}
+  }
